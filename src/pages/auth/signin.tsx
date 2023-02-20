@@ -36,16 +36,12 @@ const SigninPage = () => {
       redirect: false,
       email: data.email,
       password: data.password,
-    })
-      .then((res) => {
-        if (res?.error) {
-          setError(res.error);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e);
-      });
+    }).then((res) => {
+      if (res?.error) {
+        console.log(res.error);
+        setError(res.error);
+      }
+    });
   };
   return (
     <Box width="100vw" height="100vh">
