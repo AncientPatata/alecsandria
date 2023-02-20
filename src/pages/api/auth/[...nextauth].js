@@ -6,6 +6,7 @@ import prisma from "../../../../lib/prisma";
 
 const options = {
   //adapter: PrismaAdapter(prisma),
+  debug: true,
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
