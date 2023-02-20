@@ -29,7 +29,6 @@ const options = {
               body: JSON.stringify(credentials),
             }
           ).then((res) => res.json());
-
           if (user) {
             return user;
           } else {

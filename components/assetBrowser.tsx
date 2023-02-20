@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-
+import { useQuery } from "@tanstack/react-query";
 import {
   Box,
+  Skeleton,
   Table,
   TableContainer,
   Tbody,
@@ -18,7 +19,7 @@ import { AssetData } from "lib/typeDefinitions";
 // @ts-ignore
 function AssetBrowser(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [assets, setAssets] = useState<AssetData[]>([]);
+  const { data: assets, status, error } = useQuery("assets", getAssets);
   //@ts-ignore
   let updater: (v: AssetData) => void = undefined;
   const setUpdater = (newUpdater: (v: AssetData) => void) => {
@@ -31,10 +32,30 @@ function AssetBrowser(props) {
     }
     onOpen();
   };
+  if (status === "loading") {
+    return (
+      <Box {...props}>
+        <TableContainer width="100%" height="100%">
+          <Table size="sm">
+            <Thead>
+              <Tr>
+                <Th>Asset Name</Th>
+                <Th>Asset Engine</Th>
+                <Th>Asset Tags</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Skeleton />
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+    );
+  }
 
-  useEffect(() => {
-    getAssets()?.then((res) => setAssets(res));
-  }, []);
+  if (status === "error") {
+    return <Box {...props}>{error}</Box>;
+  }
   return (
     <Box {...props}>
       <TableContainer width="100%" height="100%">
