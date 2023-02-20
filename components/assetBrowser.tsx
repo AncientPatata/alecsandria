@@ -19,7 +19,7 @@ import { AssetData } from "lib/typeDefinitions";
 // @ts-ignore
 function AssetBrowser(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { data: assets, status, error } = useQuery("assets", getAssets);
+  const { data: assets, status, error } = useQuery(["assets"], getAssets);
   //@ts-ignore
   let updater: (v: AssetData) => void = undefined;
   const setUpdater = (newUpdater: (v: AssetData) => void) => {
