@@ -29,7 +29,6 @@ const options = {
               body: credentials,
             }
           ).then((res) => res.json());
-          console.log(user);
 
           if (user) {
             return user;
