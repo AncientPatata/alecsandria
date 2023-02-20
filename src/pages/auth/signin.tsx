@@ -33,13 +33,19 @@ const SigninPage = () => {
   // @ts-ignore
   const onSubmit = (data) => {
     signIn("credentials", {
+      redirect: false,
       email: data.email,
       password: data.password,
-    }).then((res) => {
-      if (res?.error) {
-        setError(res.error);
-      }
-    });
+    })
+      .then((res) => {
+        if (res?.error) {
+          setError(res.error);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setError(e);
+      });
   };
   return (
     <Box width="100vw" height="100vh">
