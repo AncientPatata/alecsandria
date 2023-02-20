@@ -91,6 +91,7 @@ const Auth = () => {
                       borderColor: "mustard.100",
                       bgColor: "electricBlue.100",
                     }}
+                    type="password"
                   />
                 </FormControl>
                 <FormControl marginTop="15px">

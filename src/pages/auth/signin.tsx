@@ -72,6 +72,7 @@ const SigninPage = () => {
                       borderColor: "mustard.100",
                       bgColor: "electricBlue.100",
                     }}
+                    type="password"
                   />
                 </FormControl>
                 <Button
