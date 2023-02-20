@@ -29,12 +29,9 @@ const options = {
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              accept: "application/json",
+              "Content-Type": "application/json",
             },
-            body: Object.entries(credentials)
-              .map((e) => e.join("="))
-              .join("&"),
+            body: credentials,
           }
         )
           .then((res) => res.json())
