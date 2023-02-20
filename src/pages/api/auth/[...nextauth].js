@@ -3,6 +3,7 @@ import Google from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../../../../lib/prisma";
+import fetch from "node-fetch";
 
 const options = {
   //adapter: PrismaAdapter(prisma),
