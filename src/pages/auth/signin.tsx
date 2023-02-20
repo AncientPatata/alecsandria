@@ -38,6 +38,7 @@ const SigninPage = () => {
       password: data.password,
     }).then((res) => {
       if (res?.error) {
+        console.log(res);
         console.log(res.error);
         setError(res.error);
       }

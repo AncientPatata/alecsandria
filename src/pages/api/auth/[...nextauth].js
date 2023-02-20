@@ -26,7 +26,7 @@ const options = {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: credentials,
+              body: JSON.stringify(credentials),
             }
           ).then((res) => res.json());
 
