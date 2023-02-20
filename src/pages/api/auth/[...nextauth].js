@@ -18,21 +18,26 @@ const options = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       async authorize(credentials, req) {
-        const user = await fetch(
-          `${process.env.NEXT_PUBLIC_WEBURL}/api/user/checkCredentials`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: credentials,
-          }
-        ).then((res) => res.json());
-        console.log(user);
+        try {
+          const user = await fetch(
+            `${process.env.NEXT_PUBLIC_WEBURL}/api/user/checkCredentials`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: credentials,
+            }
+          ).then((res) => res.json());
+          console.log(user);
 
-        if (user) {
-          return user;
-        } else {
+          if (user) {
+            return user;
+          } else {
+            return null;
+          }
+        } catch (e) {
+          console.log(e);
           return null;
         }
       },
