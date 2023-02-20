@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { options } from "../auth/[...nextauth]";
 
 import { AssetData, AssetDownloadData } from "lib/typeDefinitions";
+import { Session } from "next-auth";
 
 export default async function handle(
   req: NextApiRequest,
@@ -13,32 +14,44 @@ export default async function handle(
 ) {
   const session = await getServerSession(req, res, options);
   if (session) {
-    console.log("ALL GOOD");
+    if (req.method === "POST") {
+      await handlePOST(res, req, session);
+    } else {
+      throw new Error(
+        `The HTTP ${req.method} method is not supported at this route.`
+      );
+    }
   } else {
-    console.log("NOT AUTH");
-  }
-  if (req.method === "POST") {
-    await handlePOST(res, req);
-  } else {
-    throw new Error(
-      `The HTTP ${req.method} method is not supported at this route.`
-    );
+    res.status(401).json({ error: "Not Authorized" });
   }
 }
 
 // POST /api/user
-async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
+async function handlePOST(
+  res: NextApiResponse,
+  req: NextApiRequest,
+  session: Session
+) {
   const assetData: AssetData = req.body.assetData;
   const assetDownloadData: AssetDownloadData = req.body.assetDownloadData;
   try {
     prisma.assetDownload
       .create({
         data: {
-          assetId: assetData.id,
+          Asset: {
+            connect: {
+              id: assetData.id,
+            },
+          },
           assetVersion: assetDownloadData.assetVersion,
           assetEngineVersion: assetDownloadData.assetEngineVersion,
           downloadOrigin: assetDownloadData.downloadOrigin,
           downloadLink: assetDownloadData.downloadLink,
+          uploader: {
+            connect: {
+              id: session.user?.id,
+            },
+          },
         },
       })
       .then((assetDownload) => {
@@ -57,5 +70,6 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       });
   } catch (e) {
     console.log(e);
+    res.status(401).json({ error: "Failed to create a new asset download" });
   }
 }

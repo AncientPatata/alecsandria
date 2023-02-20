@@ -2,22 +2,34 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 import { omit } from "lodash";
 import { AssetData, AssetDownloadData } from "lib/typeDefinitions";
+import { getServerSession } from "next-auth/next";
+import { options } from "../auth/[...nextauth]";
+import { Session } from "next-auth";
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
-    await handlePOST(res, req);
+  const session = await getServerSession(req, res, options);
+  if (session) {
+    if (req.method === "POST") {
+      await handlePOST(res, req, session);
+    } else {
+      throw new Error(
+        `The HTTP ${req.method} method is not supported at this route.`
+      );
+    }
   } else {
-    throw new Error(
-      `The HTTP ${req.method} method is not supported at this route.`
-    );
+    res.status(401).json({ error: "Unauthorized" });
   }
 }
 
 // POST /api/user
-async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
+async function handlePOST(
+  res: NextApiResponse,
+  req: NextApiRequest,
+  session: Session
+) {
   const assetId: string = req.body;
   let asset;
 
@@ -27,7 +39,15 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
         id: assetId,
       },
       include: {
-        assetDownloads: true,
+        assetDownloads: {
+          include: {
+            uploader: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
       },
     });
   } catch (e) {

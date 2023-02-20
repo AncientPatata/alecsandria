@@ -11,10 +11,12 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
+  const getLayout = Component.getLayout || ((page) => page);
+
   return (
     <SessionProvider session={session}>
       <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </ChakraProvider>
     </SessionProvider>
   );

@@ -7,8 +7,15 @@ import {
   FormLabel,
   Input,
   Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { createUser } from "lib/user";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
@@ -19,14 +26,28 @@ const Auth = () => {
     watch,
     formState: { errors },
   } = useForm();
-  // @ts-ignore
-  const onSubmit = (data) => {
+  const [errorMessage, setErrorMessage] = useState(undefined);
+  const { data, status } = useSession();
+  const router = useRouter();
+  if (status === "authenticated") {
     // @ts-ignore
-    createUser({
+    router.push(process.env.NEXT_PUBLIC_WEBURL); // we can do all of this in a middleware later on
+  }
+  // @ts-ignore
+  const onSubmit = async (data) => {
+    // @ts-ignore
+    const createdUser = await createUser({
       username: data.username,
       email: data.email,
       password: data.password,
+      accessKeyValue: data.accessKeyValue,
     });
+    if (createdUser.error) {
+      console.log(createdUser);
+      setErrorMessage(createdUser.error);
+    } else {
+      router.push(process.env.NEXT_PUBLIC_WEBURL);
+    }
   };
   return (
     <Box width="100vw" height="100vh">
@@ -75,7 +96,7 @@ const Auth = () => {
                 <FormControl marginTop="15px">
                   <FormLabel>Access Key</FormLabel>
                   <Input
-                    {...register("accessKey", { required: true })}
+                    {...register("accessKeyValue", { required: true })}
                     variant="filled"
                     _focus={{
                       borderColor: "mustard.100",
@@ -98,6 +119,15 @@ const Auth = () => {
           </Box>
         </Box>
       </Center>
+      {errorMessage ? (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Failed to created account :</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      ) : (
+        ""
+      )}
     </Box>
   );
 };

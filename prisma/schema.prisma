@@ -35,24 +35,38 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    username      String?
-    email         String?   @unique
-    emailVerified DateTime?
-    password      String
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id                 String               @id @default(cuid())
+    username           String?
+    email              String?              @unique
+    emailVerified      DateTime?
+    password           String
+    image              String?
+    accessKey          AccessKey            @relation(fields: [accessKeyId], references: [id])
+    accounts           Account[]
+    sessions           Session[]
+    uploads            AssetDownload[]
+    accessKeyId        String               @unique
+    UserAssetDownloads UserAssetDownloads[]
 }
 
 model Asset {
-    id               String          @id @default(cuid())
-    assetEngine      String
-    assetName        String          @unique
-    assetDescription String
-    assetTags        String[]
-    assetPreviews    String[]
-    assetDownloads   AssetDownload[]
+    id                 String               @id @default(cuid())
+    assetEngine        String
+    assetName          String               @unique
+    assetDescription   String
+    assetTags          String[]
+    assetPreviews      String[]
+    assetDownloads     AssetDownload[]
+    UserAssetDownloads UserAssetDownloads[]
+}
+
+model UserAssetDownloads {
+    id           String   @id @default(cuid())
+    user         User     @relation(fields: [userId], references: [id])
+    asset        Asset    @relation(fields: [assetId], references: [id])
+    downloadedAt DateTime @default(now())
+    userId       String
+    assetId      String
 }
 
 model AssetDownload {
@@ -63,6 +77,8 @@ model AssetDownload {
     downloadLink       String
     Asset              Asset?  @relation(fields: [assetId], references: [id])
     assetId            String?
+    uploader           User    @relation(fields: [userId], references: [id])
+    userId             String
 }
 
 model VerificationToken {
@@ -73,8 +89,9 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model AccessKeys {
-    id       String @id @default(cuid())
-    keyValue String @unique
-    userId   String
+model AccessKey {
+    id        String    @id @default(cuid())
+    keyValue  String    @unique
+    expiresOn DateTime?
+    User      User?
 }

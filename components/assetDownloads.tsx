@@ -28,7 +28,7 @@ function AssetDownloadsPreview(props) {
   const { assetData, ...otherProps } = props;
   const [assetDownloads, setAssetDownloads] = useState<AssetDownloadData[]>([]);
 
-  const downloadAsset = async (key) => {
+  const downloadAsset = async (key: string, id: string) => {
     const { downloadURL } = await fetch(
       `${process.env.NEXT_PUBLIC_WEBURL}/api/asset/cdnResolve`,
       {
@@ -36,7 +36,7 @@ function AssetDownloadsPreview(props) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ assetKey: key }),
+        body: JSON.stringify({ assetKey: key, assetId: id }),
       }
     ).then((res) => res.json());
     window.open(downloadURL, "_blank");
@@ -55,6 +55,7 @@ function AssetDownloadsPreview(props) {
               <Th>Download Origin</Th>
               <Th>Asset Version</Th>
               <Th>Engine Version</Th>
+              <Th>Uploader</Th>
               <Th>Download</Th>
             </Tr>
           </Thead>
@@ -73,6 +74,7 @@ function AssetDownloadsPreview(props) {
                 <Td>{assetDownloadData.downloadOrigin}</Td>
                 <Td>{assetDownloadData.assetVersion}</Td>
                 <Td>{assetDownloadData.assetEngineVersion}</Td>
+                <Td>{assetDownloadData.uploader.username}</Td>
                 <Td>
                   <Box
                     backgroundColor="smokyBlack.100"
@@ -80,7 +82,10 @@ function AssetDownloadsPreview(props) {
                     width="100px"
                     height="25px"
                     onClick={() =>
-                      downloadAsset(assetDownloadData.downloadLink)
+                      downloadAsset(
+                        assetDownloadData.downloadLink,
+                        assetData.id
+                      )
                     }
                   >
                     <Center width="100%" height="100%">

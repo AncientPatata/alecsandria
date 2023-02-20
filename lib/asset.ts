@@ -3,7 +3,7 @@ import { AssetData, AssetDownloadData } from "./typeDefinitions";
 // @ts-ignore
 const createAsset = (assetData) => {
   // @ts-ignore
-  const asset = fetch(`http://localhost:3000/api/asset/create`, {
+  const asset = fetch(`${process.env.NEXT_PUBLIC_WEBURL}/api/asset/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ const createAsset = (assetData) => {
 
 // Need filtering
 const getAssets = () => {
-  const assets = fetch(`http://localhost:3000/api/asset/search`, {
+  const assets = fetch(`${process.env.NEXT_PUBLIC_WEBURL}/api/asset/search`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +45,7 @@ const uploadAssetFile = (
   assetDownloadData: AssetDownloadData
 ) => {
   // @ts-ignore
-  const asset = fetch(`http://localhost:3000/api/asset/upload`, {
+  const asset = fetch(`${process.env.NEXT_PUBLIC_WEBURL}/api/asset/upload`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -66,13 +66,16 @@ const uploadAssetFile = (
 };
 
 const getAssetDownloads = (assetId: string) => {
-  const assetDownloads = fetch(`http://localhost:3000/api/asset/download`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(assetId),
-  })
+  const assetDownloads = fetch(
+    `${process.env.NEXT_PUBLIC_WEBURL}/api/asset/download`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(assetId),
+    }
+  )
     .then((res) => res.json())
     .catch((err) => {
       console.log(err);

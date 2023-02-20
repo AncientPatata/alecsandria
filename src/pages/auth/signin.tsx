@@ -20,7 +20,7 @@ const SigninPage = () => {
 
   if (status === "authenticated") {
     // @ts-ignore
-    router.push("http://localhost:3000"); // we can do all of this in a middleware later on
+    router.push(process.env.NEXT_PUBLIC_WEBURL); // we can do all of this in a middleware later on
   }
 
   const [error, setError] = useState("");

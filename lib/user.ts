@@ -3,16 +3,24 @@ import { SignupFormData } from "./typeDefinitions";
 // @ts-ignore
 const createUser = (userData) => {
   // @ts-ignore
-  const user = fetch(`http://localhost:3000/api/user/create`, {
+  const user = fetch(`${process.env.NEXT_PUBLIC_WEBURL}/api/user/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(userData),
   })
-    .then((res) => res.json())
+    .then(async (res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        return Promise.reject(await res.json().then((resp) => resp.error));
+      }
+    })
     .catch((err) => {
-      return null;
+      return {
+        error: err,
+      };
     });
 
   if (user) {
@@ -22,4 +30,34 @@ const createUser = (userData) => {
   }
 };
 
-export { createUser };
+const getUserAssets = () => {
+  const userAssets = fetch(
+    `${process.env.NEXT_PUBLIC_WEBURL}/api/user/userAssets`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then(async (res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        return Promise.reject(await res.json().then((resp) => resp.error));
+      }
+    })
+    .catch((err) => {
+      return {
+        error: err,
+      };
+    });
+
+  if (userAssets) {
+    return userAssets;
+  } else {
+    return null;
+  }
+};
+
+export { createUser, getUserAssets };
