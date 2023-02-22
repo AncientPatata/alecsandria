@@ -41,6 +41,8 @@ model User {
     emailVerified      DateTime?
     password           String
     image              String?
+    userRoles          String[]             @default(["User"])
+    userKarma          Int                  @default(0)
     accessKey          AccessKey            @relation(fields: [accessKeyId], references: [id])
     accounts           Account[]
     sessions           Session[]

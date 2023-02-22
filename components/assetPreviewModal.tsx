@@ -105,7 +105,6 @@ function AssetPreviewModal(props) {
       setAssetData(newData);
     }
   });
-  console.log(assetData);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="full">

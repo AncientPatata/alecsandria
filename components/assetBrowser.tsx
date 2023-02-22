@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
   Box,
   Skeleton,
@@ -13,13 +12,12 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { getAssets } from "lib/asset";
 import AssetPreviewModal from "./assetPreviewModal";
 import { AssetData } from "lib/typeDefinitions";
 // @ts-ignore
 function AssetBrowser(props) {
+  const { assets, status, ...otherProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { data: assets, status, error } = useQuery(["assets"], getAssets);
   //@ts-ignore
   let updater: (v: AssetData) => void = undefined;
   const setUpdater = (newUpdater: (v: AssetData) => void) => {
@@ -34,7 +32,7 @@ function AssetBrowser(props) {
   };
   if (status === "loading") {
     return (
-      <Box {...props}>
+      <Box {...otherProps}>
         <TableContainer width="100%" height="100%">
           <Table size="sm">
             <Thead>
@@ -53,9 +51,6 @@ function AssetBrowser(props) {
     );
   }
 
-  if (status === "error") {
-    return <Box {...props}>{error}</Box>;
-  }
   return (
     <Box {...props}>
       <TableContainer width="100%" height="100%">
@@ -68,7 +63,7 @@ function AssetBrowser(props) {
             </Tr>
           </Thead>
           <Tbody>
-            {assets.map((assetData) => (
+            {assets?.map((assetData) => (
               <Tr
                 //@ts-ignore
                 key={assetData.id}

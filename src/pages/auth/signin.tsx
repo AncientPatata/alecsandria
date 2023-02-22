@@ -20,7 +20,7 @@ const SigninPage = () => {
 
   if (status === "authenticated") {
     // @ts-ignore
-    router.push(process.env.NEXT_PUBLIC_WEBURL); // we can do all of this in a middleware later on
+    router.push("../dashboard/browse"); // we can do all of this in a middleware later on
   }
 
   const [error, setError] = useState("");

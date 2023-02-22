@@ -68,6 +68,13 @@ function TopNavigationBar(props) {
             <MenuList>
               <MenuGroup title="Profile">
                 <MenuItem>My Account</MenuItem>
+                {data?.user?.roles?.includes("Mod") ? (
+                  <MenuItem onClick={() => router.push("./moderate")}>
+                    Moderate
+                  </MenuItem>
+                ) : (
+                  ""
+                )}
                 <MenuItem onClick={() => router.push("./myassets")}>
                   My Assets{" "}
                 </MenuItem>

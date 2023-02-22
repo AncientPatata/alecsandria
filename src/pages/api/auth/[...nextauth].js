@@ -46,12 +46,15 @@ const options = {
     session: async ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.uid;
+        session.user.roles = token.uroles;
       }
       return session;
     },
     jwt: async ({ user, token }) => {
       if (user) {
+        console.log(user);
         token.uid = user.id;
+        token.uroles = user.userRoles;
       }
       return token;
     },

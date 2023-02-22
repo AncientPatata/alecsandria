@@ -17,17 +17,25 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Skeleton,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { usePresignedUpload } from "next-s3-upload";
 import { getAssetDownloads, uploadAssetFile } from "lib/asset";
 import { AssetDownloadData } from "lib/typeDefinitions";
 import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 
 function AssetDownloadsPreview(props) {
   const { assetData, ...otherProps } = props;
-  const [assetDownloads, setAssetDownloads] = useState<AssetDownloadData[]>([]);
-
+  const {
+    data: assetDownloads,
+    status,
+    error,
+  } = useQuery({
+    queryKey: ["assetDownloads" + assetData.id],
+    queryFn: () => getAssetDownloads(assetData.id),
+  });
   const downloadAsset = async (key: string, id: string) => {
     const { downloadURL } = await fetch(
       `${process.env.NEXT_PUBLIC_WEBURL}/api/asset/cdnResolve`,
@@ -41,13 +49,36 @@ function AssetDownloadsPreview(props) {
     ).then((res) => res.json());
     window.open(downloadURL, "_blank");
   };
+  console.log("Asset downloads : ", assetDownloads);
 
-  useEffect(() => {
-    getAssetDownloads(assetData.id).then((res) => setAssetDownloads(res));
-  }, []);
+  if (status === "loading") {
+    return (
+      <Box>
+        <TableContainer width="100%" height="100%">
+          <Table size="sm">
+            <Thead>
+              <Tr>
+                <Th>Download Origin</Th>
+                <Th>Asset Version</Th>
+                <Th>Engine Version</Th>
+                <Th>Uploader</Th>
+                <Th>Download</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Skeleton />
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+    );
+  }
+  if (status === "error") {
+    return <Box>{error}</Box>;
+  }
+
   return (
     <Box>
-      {" "}
       <TableContainer width="100%" height="100%">
         <Table size="sm">
           <Thead>

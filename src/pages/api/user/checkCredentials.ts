@@ -26,6 +26,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       email: true,
       image: true,
       password: true,
+      userRoles: true,
     },
   });
   if (user && bcrypt.compareSync(req.body.password, user.password)) {
