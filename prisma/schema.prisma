@@ -62,6 +62,10 @@ model Asset {
     UserAssetDownloads UserAssetDownloads[]
 }
 
+model PostInteraction {
+    id String @id @default(cuid())
+}
+
 model UserAssetDownloads {
     id           String   @id @default(cuid())
     user         User     @relation(fields: [userId], references: [id])
