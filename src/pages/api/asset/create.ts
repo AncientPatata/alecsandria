@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 import { omit } from "lodash";
 import { AssetData } from "lib/typeDefinitions";
+import { createId } from "@paralleldrive/cuid2";
 
 export default async function handle(
   req: NextApiRequest,
@@ -20,10 +21,11 @@ export default async function handle(
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   const assetData: AssetData = req.body;
   let asset;
-
+  let assetId = createId();
   try {
     asset = await prisma.asset.create({
       data: {
+        id: assetId,
         assetName: assetData.assetName,
         assetEngine: assetData.assetEngine,
         assetDescription: assetData.assetDescription,
@@ -32,7 +34,9 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
         assetDownloads: assetData.assetDownloads,
         assetInteraction: {
           connectOrCreate: {
-            where: {},
+            where: {
+              id: assetId,
+            },
             create: {
               comments: {},
             },
