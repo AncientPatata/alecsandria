@@ -49,6 +49,7 @@ model User {
     uploads            AssetDownload[]
     accessKeyId        String               @unique
     UserAssetDownloads UserAssetDownloads[]
+    Comment            Comment[]
 }
 
 model Asset {
@@ -59,11 +60,29 @@ model Asset {
     assetTags          String[]
     assetPreviews      String[]
     assetDownloads     AssetDownload[]
+    assetInteraction   PostInteraction      @relation(fields: [postInteractionId], references: [id])
     UserAssetDownloads UserAssetDownloads[]
+    postInteractionId  String               @unique
+    creationDate       DateTime             @default(now())
 }
 
 model PostInteraction {
-    id String @id @default(cuid())
+    id       String    @id @default(cuid())
+    karma    Int       @default(0)
+    comments Comment[]
+    Asset    Asset?
+}
+
+model Comment {
+    id                String           @id @default(cuid())
+    commenter         User             @relation(fields: [userId], references: [id])
+    comment           String
+    commentKarma      Int              @default(0)
+    parentCommentId   String?
+    creationDate      DateTime         @default(now())
+    PostInteraction   PostInteraction? @relation(fields: [postInteractionId], references: [id])
+    postInteractionId String?
+    userId            String
 }
 
 model UserAssetDownloads {
