@@ -30,6 +30,14 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
         assetTags: assetData.assetTags,
         assetPreviews: assetData.assetPreviews,
         assetDownloads: assetData.assetDownloads,
+        assetInteraction: {
+          connectOrCreate: {
+            where: {},
+            create: {
+              comments: {},
+            },
+          },
+        },
       },
     });
   } catch (e) {
