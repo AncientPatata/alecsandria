@@ -27,7 +27,11 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       data: {
         id: assetId,
         assetName: assetData.assetName,
-        assetEngine: assetData.assetEngine,
+        engine: {
+          connect: {
+            assetEngine: assetData.assetEngine,
+          },
+        },
         assetDescription: assetData.assetDescription,
         assetTags: assetData.assetTags,
         assetPreviews: assetData.assetPreviews,

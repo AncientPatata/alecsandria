@@ -3,7 +3,7 @@ import MiniSearch from "minisearch";
 import { useState } from "react";
 
 function SearchBar(props) {
-  const { data, setSubdata, ...otherProps } = props;
+  const { data, setSubdata, children, ...otherProps } = props;
   const [searchBarInput, setSearchBarInput] = useState("");
 
   let miniSearch = new MiniSearch({
@@ -11,22 +11,39 @@ function SearchBar(props) {
   });
   miniSearch.addAll(data);
   const performSearch = () => {
-    const searchResults = miniSearch.search(searchBarInput);
-    console.log("search results : " + JSON.stringify(searchResults));
-    setSubdata(searchResults);
+    if (searchBarInput != "") {
+      const searchResults = miniSearch.search(searchBarInput);
+      console.log("search results : " + JSON.stringify(searchResults));
+      setSubdata(searchResults);
+    } else {
+      setSubdata(data);
+    }
   };
   return (
     <Box {...otherProps}>
-      <Flex flexDirection="row" mt="15" mb="10">
+      <Flex flexDirection="row" mt="15" mb="10" height="100%">
         <Input
           ml="10"
           width="85%"
+          rounded="none"
           value={searchBarInput}
           onChange={(e) => setSearchBarInput(e.target.value)}
+          height="100%"
         />
-        <Button width="15%" onClick={performSearch} mr="10" ml="10">
+        <Button
+          onClick={performSearch}
+          ml="10px"
+          width="100px"
+          height="100%"
+          rounded="none"
+          backgroundColor="gray.100"
+          _hover={{
+            backgroundColor: "mustard.100",
+          }}
+        >
           Search
         </Button>
+        {children}
       </Flex>
     </Box>
   );

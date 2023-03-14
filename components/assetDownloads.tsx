@@ -295,7 +295,7 @@ function AssetDownloadsComponent(props) {
       onClick={() => setCurrentView("AssetDownload")}
       rounded="none"
       minHeight="5vh"
-      backgroundColor="electricBlue.300"
+      backgroundColor="gray.100"
       _hover={{
         backgroundColor: "mustard.100",
       }}
@@ -315,14 +315,14 @@ function AssetDownloadsComponent(props) {
   }
   return (
     <Box {...otherProps}>
-      <Box width="100%" height="15%" backgroundColor="electricBlue.100">
+      <Box width="100%" height="15%" backgroundColor="gray.100" mb="20px">
         <Flex flexDirection="row" width="100%">
           <Button
             ml="3"
             onClick={() => setCurrentView("AssetUpload")}
             rounded="none"
             minHeight="5vh"
-            backgroundColor="whiteAlpha.50"
+            backgroundColor="gray.100"
             _hover={{
               backgroundColor: "mustard.100",
             }}

@@ -10,7 +10,7 @@ function Home() {
   // When rendering client side don't display anything until loading is complete
 
   if (status == "authenticated") {
-    router.push("dashboard/browse");
+    router.push("dashboard");
   }
   const goto = (page: string) => {
     router.push("auth/" + page);

@@ -32,7 +32,7 @@ function DashboardLayout({
   return (
     <>
       <Box>
-        <TopNavigationBar height="5vh" width="100vw" />
+        <TopNavigationBar height="7vh" width="100vw" fontFamily="opensans" />
         {children}
       </Box>
     </>

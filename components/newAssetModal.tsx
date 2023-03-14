@@ -19,10 +19,41 @@ import {
   FormLabel,
   Input,
   Textarea,
+  Alert,
+  AlertIcon,
+  Skeleton,
+  Text,
 } from "@chakra-ui/react";
 
 import { Controller, useForm } from "react-hook-form";
-import { assetTags, createAsset, engines } from "lib/asset";
+import { createAsset, getEngines } from "lib/asset";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Engine } from "@prisma/client";
+
+function QueryResponse(props) {
+  console.log(props);
+  return (
+    <Box height="45px" width="100%" mt="15px" mb="15px">
+      {props.submitting ? (
+        props.isLoading ? (
+          <Skeleton width="100%" height="100%" />
+        ) : props.isError ? (
+          <Alert status="error">
+            <AlertIcon />
+            {"Failed to add asset, try again : " + props.error}
+          </Alert>
+        ) : (
+          <Alert status="success">
+            <AlertIcon /> Created new asset{" "}
+          </Alert>
+        )
+      ) : (
+        <></>
+      )}
+    </Box>
+  );
+}
 
 //@ts-ignore
 function NewAssetForm(props) {
@@ -32,16 +63,38 @@ function NewAssetForm(props) {
     handleSubmit,
     watch,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm();
 
-  const watchAssetEngine = watch("assetEngine", engines[0]);
+  const queryClient = useQueryClient();
+
+  const [submitting, setSubmitting] = useState(false);
+
+  // Mutations
+  const mutation = useMutation({
+    mutationFn: createAsset,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["assets"] });
+    },
+  });
+
+  const {
+    isLoading,
+    error,
+    data: engines,
+    refetch,
+  } = useQuery({
+    queryKey: ["engines"],
+    queryFn: getEngines,
+  });
+
   // @ts-ignore
   const onSubmit = (data) => {
     // @ts-ignore
     console.log(data);
     console.log(data.assetTags);
-    createAsset({
+    mutation.mutate({
       assetName: data.assetName,
       assetEngine: data.assetEngine,
       assetDescription: data.assetDescription,
@@ -51,7 +104,18 @@ function NewAssetForm(props) {
         .filter((elem) => elem.length > 5),
       assetDownloads: {},
     });
+    setSubmitting(true);
   };
+
+  let watchAssetEngine = watch("assetEngine", null);
+
+  if (isLoading) {
+    return (
+      <Box>
+        <Skeleton width="100%" height="60px" />
+      </Box>
+    );
+  }
 
   return (
     <Box {...otherProps}>
@@ -60,6 +124,9 @@ function NewAssetForm(props) {
           <FormLabel>Asset Name</FormLabel>
           <Input {...register("assetName", { required: true })} />
         </FormControl>
+        {errors.assetName && errors.assetName.type === "required" && (
+          <Text color="red.200">This is required</Text>
+        )}
         <FormControl marginTop="15px">
           <FormLabel>Asset Engine</FormLabel>
           <Controller
@@ -72,28 +139,42 @@ function NewAssetForm(props) {
                 <AutoCompleteInput
                   variant="outline"
                   onChange={field.onChange}
-                  value={field.value ? field.value : engines[0]}
+                  value={field.value ? field.value : ""}
                   placeholder="Choose an engine"
                 />
                 <AutoCompleteList>
-                  {engines.map((option, oid) => (
-                    <AutoCompleteItem
-                      key={`option-${oid}`}
-                      value={option}
-                      textTransform="capitalize"
-                    >
-                      {option}
-                    </AutoCompleteItem>
-                  ))}
+                  {engines
+                    .map((engine: Engine) => engine.assetEngine)
+                    .map((option, oid) => (
+                      <AutoCompleteItem
+                        key={`option-${oid}`}
+                        value={option}
+                        textTransform="capitalize"
+                      >
+                        {option}
+                      </AutoCompleteItem>
+                    ))}
                 </AutoCompleteList>
               </AutoComplete>
             )}
           />
         </FormControl>
+        {errors.assetEngine && errors.assetEngine.type === "required" && (
+          <Text color="red.200">This is required</Text>
+        )}
         <FormControl marginTop="15px">
           <FormLabel>Asset Description</FormLabel>
-          <Textarea {...register("assetDescription", { required: true })} />
+
+          <Textarea
+            placeholder="Asset description supports Markdown. Make sure to also add the link to the asset."
+            {...register("assetDescription", { required: true })}
+            height="500px"
+          />
         </FormControl>
+        {errors.assetDescription &&
+          errors.assetDescription.type === "required" && (
+            <Text color="red.200">This is required</Text>
+          )}
         <FormControl marginTop="15px">
           <FormLabel>Asset Tags</FormLabel>
           <Controller
@@ -121,25 +202,27 @@ function NewAssetForm(props) {
                   }}
                 </AutoCompleteInput>
                 <AutoCompleteList>
-                  {(assetTags[watchAssetEngine]
-                    ? assetTags[watchAssetEngine]
-                    : ["Choose engine"]
-                  ).map((tag) => (
-                    <AutoCompleteItem
-                      key={`option-${tag}`}
-                      value={tag}
-                      textTransform="capitalize"
-                      _selected={{ bg: "whiteAlpha.50" }}
-                      _focus={{ bg: "whiteAlpha.100" }}
-                    >
-                      {tag}
-                    </AutoCompleteItem>
-                  ))}
+                  {engines
+                    ?.find((el) => el.assetEngine === watchAssetEngine)
+                    ?.engineAssetTags?.map((tag) => (
+                      <AutoCompleteItem
+                        key={`option-${tag}`}
+                        value={tag}
+                        textTransform="capitalize"
+                        _selected={{ bg: "whiteAlpha.50" }}
+                        _focus={{ bg: "whiteAlpha.100" }}
+                      >
+                        {tag}
+                      </AutoCompleteItem>
+                    ))}
                 </AutoCompleteList>
               </AutoComplete>
             )}
           />
         </FormControl>
+        {errors.assetTags && errors.assetTags.type === "required" && (
+          <Text color="red.200">This is required</Text>
+        )}
         <FormControl marginTop="15px">
           <FormLabel>Asset Previews</FormLabel>
           <Textarea
@@ -147,7 +230,16 @@ function NewAssetForm(props) {
             {...register("assetPreviews", { required: true })}
           />
         </FormControl>
+        {errors.assetPreviews && errors.assetPreviews.type === "required" && (
+          <Text color="red.200">This is required</Text>
+        )}
       </form>
+      <QueryResponse
+        submitting={submitting}
+        isLoading={mutation.isLoading}
+        isError={mutation.isError}
+        error={mutation.error}
+      />
     </Box>
   );
 }
@@ -158,10 +250,10 @@ function NewAssetModal(props) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} {...otherProps}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add new asset</ModalHeader>
+          <ModalHeader fontFamily="opensans">Add new asset</ModalHeader>
           <ModalCloseButton />
           <Box
             paddingRight="30px"
@@ -169,6 +261,7 @@ function NewAssetModal(props) {
             paddingBottom="20px"
             width="100%"
             height="100%"
+            fontFamily="opensans"
           >
             <NewAssetForm onCLose={onClose} />
           </Box>
@@ -179,10 +272,16 @@ function NewAssetModal(props) {
               mr={3}
               type="submit"
               form="new-asset-form"
+              fontFamily="opensans"
             >
               Create Asset
             </Button>
-            <Button colorScheme="red" variant="outline" onClick={onClose}>
+            <Button
+              colorScheme="red"
+              variant="outline"
+              onClick={onClose}
+              fontFamily="opensans"
+            >
               Close
             </Button>
           </ModalFooter>

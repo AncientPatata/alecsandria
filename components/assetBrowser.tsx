@@ -54,7 +54,7 @@ function AssetBrowser(props) {
   return (
     <Box {...props}>
       <TableContainer width="100%" height="100%">
-        <Table size="sm">
+        <Table size="md">
           <Thead>
             <Tr>
               <Th>Asset Name</Th>

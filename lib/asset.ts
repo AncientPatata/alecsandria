@@ -9,9 +9,7 @@ const createAsset = (assetData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(assetData),
-  })
-    .then((res) => res.json())
-    .then();
+  }).then((res) => res.json());
 
   if (asset) {
     return asset;
@@ -85,6 +83,62 @@ const getAssetDownloads = (assetId: string) => {
   return assetDownloads;
 };
 
+const addNewEngine = (engineName: string) => {
+  const assetDownloads = fetch(
+    `${process.env.NEXT_PUBLIC_WEBURL}/api/moderate/engine`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ engineName: engineName }),
+    }
+  )
+    .then((res) => res.json())
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  return assetDownloads;
+};
+
+const getEngines = () => {
+  const assetDownloads = fetch(
+    `${process.env.NEXT_PUBLIC_WEBURL}/api/moderate/engine`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((res) => res.json())
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  return assetDownloads;
+};
+
+const addNewEngineTag = (engineName: string, newTag: string) => {
+  const res = fetch(`${process.env.NEXT_PUBLIC_WEBURL}/api/moderate/addTags`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ engineName: engineName, newTag: newTag }),
+  })
+    .then((res) => res.json())
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  return res;
+};
+
 const unrealAssetTags = [
   "2D",
   "3D",
@@ -108,6 +162,9 @@ const engines = ["Unreal Engine", "Unity"];
 
 export {
   createAsset,
+  addNewEngine,
+  getEngines,
+  addNewEngineTag,
   assetTags,
   engines,
   getAssets,

@@ -27,12 +27,17 @@ function UploadedAssetsTable(props) {
   const uploadedAssets = props.assets;
   const openAssetModal = props.openAssetModal;
   return (
-    <Box>
-      <Center height="20px" width="100%">
-        <Text>Uploads</Text>
+    <Box fontFamily="opensans">
+      <Center
+        height="50px"
+        width="100%"
+        mb="10px"
+        backgroundColor="mustard.100"
+      >
+        <Text fontSize="2xl">Uploads</Text>
       </Center>
       <TableContainer width="100%" height="100%">
-        <Table size="sm">
+        <Table size="md">
           <Thead>
             <Tr>
               <Th>Asset Name</Th>
@@ -78,14 +83,19 @@ function DownloadedAssetsTable(props) {
   const downloadedAssets = props.assets;
   const openAssetModal = props.openAssetModal;
   return (
-    <Box mt="20px" mb="20px">
-      <Center height="20px" width="100%" mb="10px">
-        <Text fontWeight="bold" fontSize="xl">
+    <Box mt="20px" mb="20px" fontFamily="opensans">
+      <Center
+        height="50px"
+        width="100%"
+        mb="10px"
+        backgroundColor="mustard.100"
+      >
+        <Text fontSize="2xl" fontFamily="opensans">
           Downloads
         </Text>
       </Center>
       <TableContainer width="100%" height="100%">
-        <Table size="sm">
+        <Table size="md">
           <Thead>
             <Tr>
               <Th>Asset Name</Th>
@@ -115,13 +125,6 @@ function DownloadedAssetsTable(props) {
               ))
             )}
           </Tbody>
-          <Tfoot>
-            <Tr>
-              <Th>Asset Name</Th>
-              <Th>Asset Engine</Th>
-              <Th>Asset Tags</Th>
-            </Tr>
-          </Tfoot>
         </Table>
       </TableContainer>
     </Box>
@@ -176,8 +179,8 @@ function MyAssets(props) {
   }
 
   return (
-    <Box {...props} height="95vh">
-      <Flex flexDir="column">
+    <Box {...props} height="93vh">
+      <Flex flexDir="column" mr="30px" ml="30px">
         <DownloadedAssetsTable
           assets={downloadedAssets}
           openAssetModal={openAssetModal}

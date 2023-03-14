@@ -30,7 +30,16 @@ function Dashboard() {
     <>
       <Box>
         <TopNavigationBar height="5vh" width="100vw" />
-        <AssetBrowser />
+        <Center height="93vh" width="100%">
+          <Text
+            fontFamily="opensans"
+            fontSize="2xl"
+            color="smokyBlack.100"
+            userSelect="none"
+          >
+            Welcome to AleCSandria
+          </Text>
+        </Center>
       </Box>
     </>
   );

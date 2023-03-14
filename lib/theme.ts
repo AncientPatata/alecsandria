@@ -1,10 +1,12 @@
 import { extendTheme } from "@chakra-ui/react";
-import { Playfair_Display } from "@next/font/google";
+import { Playfair_Display, Open_Sans } from "@next/font/google";
 
 const playfair_display = Playfair_Display({ subsets: ["latin"] });
+const opensans = Open_Sans({ subsets: ["latin"] });
 const theme = extendTheme({
   fonts: {
     playfair_display: playfair_display.style.fontFamily,
+    opensans: opensans.style.fontFamily,
   },
   colors: {
     mustard: {

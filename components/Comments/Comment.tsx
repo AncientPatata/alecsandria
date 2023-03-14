@@ -1,9 +1,9 @@
 import { Box, Flex } from "@chakra-ui/react";
 
 function Comment(props) {
-  const { commenter, comment, creationDate, karma } = props;
+  const { commenter, comment, creationDate, karma, ...otherProps } = props;
   return (
-    <Box width="90%" minHeight="40px">
+    <Box width="90%" minHeight="40px" {...otherProps}>
       <Box height="20px" width="100%">
         <Flex>
           <Box>{commenter}</Box>
