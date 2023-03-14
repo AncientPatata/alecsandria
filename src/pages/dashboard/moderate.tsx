@@ -138,10 +138,6 @@ function GenerateAT(props) {
 function EditEngineModal(props) {
   const { isOpen, onClose, engine, ...otherProps } = props;
 
-  if (engine === null) {
-    return <Box></Box>;
-  }
-
   const [newTagName, setNewTagName] = useState("");
 
   const queryClient = useQueryClient();
@@ -180,6 +176,10 @@ function EditEngineModal(props) {
       queryClient.invalidateQueries({ queryKey: ["engines"] });
     },
   });
+
+  if (engine === null) {
+    return <Box></Box>;
+  }
 
   return (
     <Box>
